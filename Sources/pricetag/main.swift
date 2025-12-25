@@ -28,7 +28,7 @@ ensureFileExists(at: dbDir)
 func loadDB() throws -> PricetagDB {
     let url = dbDir
     guard FileManager.default.fileExists(atPath: url.path) else {
-        return PricetagDB(tags: [], paths: [:])
+        return PricetagDB(paths: [:])
     }
     let data = try Data(contentsOf: url)
     return try JSONDecoder().decode(PricetagDB.self, from: data)
@@ -41,14 +41,14 @@ func saveDB(_ db: PricetagDB) throws {
 
 // Tag a file
 func tagFile(file: String, tag: String) throws {
-    var db = loadDB()
-    db.paths[file].append(tag)
-    try saveDB(db: db)
+    var db = try loadDB()
+    db.paths[file]?.append(tag)
+    try saveDB(db)
 }
 
 // Remove tag from file
-func untagFile(from file: String, tag: String) {
-    var db = loadDB()
+func untagFile(from file: String, tag: String) throws {
+    var db = try loadDB()
     guard var tags = db.paths[file] else {
         print("No tags for file \(file)")
         return
@@ -66,8 +66,8 @@ func untagFile(from file: String, tag: String) {
 }
 
 // Clear file tags
-func clearFile(file: String) {
-    var db = loadDB()
+func clearFile(file: String) throws {
+    var db = try loadDB()
     db.paths[file] = []
-    try saveDB(db: db)
+    try saveDB(db)
 }
