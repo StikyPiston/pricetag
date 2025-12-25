@@ -42,7 +42,11 @@ func saveDB(_ db: PricetagDB) throws {
 // Tag a file
 func tagFile(file: String, tag: String) throws {
     var db = try loadDB()
-    db.paths[file]?.append(tag)
+    if db.paths[file] != nil {
+        db.paths[file]!.append(tag)
+    } else {
+        db.paths[file] = [tag]        
+    }
     try saveDB(db)
 }
 
