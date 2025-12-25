@@ -67,6 +67,8 @@ func untagFile(from file: String, tag: String) throws {
     } else {
         db.paths[file] = tags
     }
+
+    try saveDB(db)
 }
 
 // Clear file tags
