@@ -242,27 +242,29 @@ func printItem(_ name: String, db: PricetagDB) {
     var isDir: ObjCBool = false
     FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir)
 
-    let rawIcon = iconForItem(named: name, fullPath: fullPath, db: db)
+    let ext = URL(fileURLWithPath: name).pathExtension.lowercased()
 
-    let icon: String
-    let displayName: String
-
+    // Determine color and icon
+    let (icon, colorCode): (String, String)
     if isDir.boolValue {
-        let blue = TagColor.blue.ansiCode
-        let reset = TagColor.reset
-
-        icon = "\(blue)\(rawIcon)\(reset)"
-        displayName = "\(blue)\(name)\(reset)"
+        icon = " "
+        colorCode = TagColor.blue.ansiCode
+    } else if let iconInfo = db.icons[ext] {
+        icon = iconInfo.icon
+        colorCode = iconInfo.color.ansiCode
     } else {
-        icon = rawIcon
-        displayName = name
+        icon = " "
+        colorCode = TagColor.reset
     }
+
+    // Construct display string
+    let displayName = "\(icon) \(name)"
 
     if let tags = db.paths[fullPath], !tags.isEmpty {
         let tagString = formatTags(tags, db: db)
-        print("\(icon) \(displayName) \(tagString)")
+        print("\(colorCode)\(displayName) \(tagString)\(TagColor.reset)")
     } else {
-        print("\(icon) \(displayName)")
+        print("\(colorCode)\(displayName)\(TagColor.reset)")
     }
 }
 
