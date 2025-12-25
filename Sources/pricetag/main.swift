@@ -54,6 +54,19 @@ func ensureFileExists(at url: URL) {
 
 ensureFileExists(at: dbDir)
 
+// Expand paths
+func canonicalPath(_ path: String) -> String {
+    let url = URL(fileURLWithPath: path, relativeTo: FileManager.default.currentDirectoryPath.hasPrefix("/")
+        ? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        : nil)
+
+    let expanded = NSString(string: url.path).expandingTildeInPath
+    let standardized = URL(fileURLWithPath: expanded).standardizedFileURL
+
+    return standardized.path
+}
+
+
 // Load/Save database
 func loadDB() throws -> PricetagDB {
     let url = dbDir
@@ -99,19 +112,23 @@ func tagFile(file: String, tag: String) throws {
         return
     }
 
-    var tags = db.paths[file, default: []]
+    let fullPath = canonicalPath(file)
+
+    var tags = db.paths[fullPath, default: []]
 
     if !tags.contains(tag) {
         tags.append(tag)
     }
 
-    db.paths[file] = tags
+    db.paths[fullPath] = tags
     try saveDB(db)
     print(" Added tag \(tag) to file \(file)")
 }
 
 // Remove tag from file
 func untagFile(from file: String, tag: String) throws {
+    let file = canonicalPath(file)
+
     var db = try loadDB()
     guard var tags = db.paths[file] else {
         print("󱈠 No tags for file \(file)")
@@ -135,6 +152,8 @@ func untagFile(from file: String, tag: String) throws {
 
 // Clear file tags
 func clearFile(file: String) throws {
+    let file = canonicalPath(file)
+
     var db = try loadDB()
     db.paths[file] = []
     try saveDB(db)
@@ -158,6 +177,8 @@ func listTags() throws {
 
 // Get tag info for a file
 func fileInfo(for file: String) throws {
+    let file = canonicalPath(file)
+
     let db = try loadDB()
 
     guard let tags = db.paths[file], !tags.isEmpty else {
