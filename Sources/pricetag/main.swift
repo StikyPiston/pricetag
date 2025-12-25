@@ -224,22 +224,51 @@ func iconForItem(named name: String, fullPath: String, db: PricetagDB) -> String
     return " "
 }
 
+// Item printing helper
+func printItem(_ name: String, db: PricetagDB) {
+    let fullPath = canonicalPath(name)
+    let icon = iconForItem(named: name, fullPath: fullPath, db: db)
+
+    if let tags = db.paths[fullPath], !tags.isEmpty {
+        let tagString = formatTags(tags, db: db)
+        print("\(icon) \(name) \(tagString)")
+    } else {
+        print("\(icon) \(name)")
+    }
+}
+
 // List working directory contents
-func pricetagLS() throws {
+func pricetagLS(showAll: Bool) throws {
     let db = try loadDB()
     let cwd = FileManager.default.currentDirectoryPath
     let items = try FileManager.default.contentsOfDirectory(atPath: cwd)
 
-    for name in items.sorted() {
-        let fullPath = canonicalPath(name)
-        let icon = iconForItem(named: name, fullPath: fullPath, db: db)
+    var directories: [String] = []
+    var files: [String] = []
 
-        if let tags = db.paths[fullPath], !tags.isEmpty {
-            let tagString = formatTags(tags, db: db)
-            print("\(icon) \(name) \(tagString)")
-        } else {
-            print("\(icon) \(name)")
+    for name in items {
+        if !showAll && name.hasPrefix(".") {
+            continue
         }
+
+        let fullPath = canonicalPath(name)
+
+        var isDir: ObjCBool = false
+        FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir)
+
+        if isDir.boolValue {
+            directories.append(name)
+        } else {
+            files.append(name)
+        }
+    }
+
+    for name in directories.sorted() {
+        printItem(name, db: db)
+    }
+
+    for name in files.sorted() {
+        printItem(name, db: db)
     }
 }
 
@@ -283,7 +312,8 @@ if args.count > 1 {
         case "listtags":
             try listTags()
         case "ls":
-            try pricetagLS()
+            let showAll = args.contains("-a")
+            try pricetagLS(showAll: showAll)
         case "seticon":
             try setIcon(extension: args[2], icon: args[3])
         default:
