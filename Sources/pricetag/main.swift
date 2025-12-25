@@ -73,7 +73,7 @@ func canonicalPath(_ path: String) -> String {
 func loadDB() throws -> PricetagDB {
     let url = dbDir
     guard FileManager.default.fileExists(atPath: url.path) else {
-        return PricetagDB(tags: [:], paths: [:])
+        return PricetagDB(tags: [:], icons: [:], paths: [:])
     }
     let data = try Data(contentsOf: url)
     return try JSONDecoder().decode(PricetagDB.self, from: data)
