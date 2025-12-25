@@ -8,6 +8,8 @@ enum TagColor: String, Codable {
     case green
     case blue
     case purple
+    case black
+    case white
 }
 
 extension TagColor {
@@ -19,6 +21,8 @@ extension TagColor {
         case .green:  return "\u{001B}[32m"
         case .blue:   return "\u{001B}[34m"
         case .purple: return "\u{001B}[35m"
+        case .black:  return "\u{001B}[30m"
+        case .white:  return "\u{001B}[37m"
         }
     }
 
