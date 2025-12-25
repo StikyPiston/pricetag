@@ -28,6 +28,7 @@ extension TagColor {
 // Database type
 struct PricetagDB: Codable {
     var tags: [String: TagColor]
+    var icons: [String: String]
     var paths: [String: [String]]
 }
 
@@ -41,6 +42,7 @@ func ensureFileExists(at url: URL) {
         let defaultJSON = """
         {
           "tags": {},
+          "icons": {},
           "paths": {}
         }
         """
@@ -205,6 +207,48 @@ func formatTags(_ tags: [String], db: PricetagDB) -> String {
     }.joined(separator: " ")
 }
 
+// Icon helper
+func iconForItem(named name: String, fullPath: String, db: PricetagDB) -> String {
+    var isDir: ObjCBool = false
+    FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir)
+
+    if isDir.boolValue {
+        return " "
+    }
+
+    let ext = URL(fileURLWithPath: name).pathExtension.lowercased()
+    if let icon = db.icons[ext] {
+        return icon
+    }
+
+    return " "
+}
+
+// List working directory contents
+func pricetagLS() throws {
+    let db = try loadDB()
+    let cwd = FileManager.default.currentDirectoryPath
+    let items = try FileManager.default.contentsOfDirectory(atPath: cwd)
+
+    for name in items.sorted() {
+        let fullPath = canonicalPath(name)
+        let icon = iconForItem(named: name, fullPath: fullPath, db: db)
+
+        if let tags = db.paths[fullPath], !tags.isEmpty {
+            let tagString = formatTags(tags, db: db)
+            print("\(icon) \(name) \(tagString)")
+        } else {
+            print("\(icon) \(name)")
+        }
+    }
+}
+
+// Set icon for file extension
+func setIcon(extension ext: String, icon: String) throws {
+    var db = try loadDB()
+    db.icons[ext.lowercased()] = icon
+    try saveDB(db)
+}
 
 // Help text
 let helptext = """
@@ -213,6 +257,8 @@ Usage: pricetag <action> <arguments>
 > createtag <name> <red|orange|yellow|green|blue|purple> - Create a new tag with the given name and color
 > info <file>                                            - Lists tags for the given file
 > listtags                                               - Lists available tags
+> ls                                                     - Lists the contents of the current directory + icons and tags
+> seticon <extension> <icon>                             - Sets icon for given file extension (for pricetag ls command)
 > tag <file> <tag>                                       - Add the given tag to the given file
 > untag <file> <tag>                                     - Removes the given tag from the given file
 """
@@ -236,6 +282,10 @@ if args.count > 1 {
             try fileInfo(for: args[2])
         case "listtags":
             try listTags()
+        case "ls":
+            try pricetagLS()
+        case "seticon":
+            try setIcon(extension: args[2], icon: args[3])
         default:
             print(helptext)
     }
