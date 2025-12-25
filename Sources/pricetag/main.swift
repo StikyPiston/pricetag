@@ -29,10 +29,16 @@ extension TagColor {
     static let reset = "\u{001B}[0m"
 }
 
+// FiletypeIcon type
+struct FiletypeIcon: Codable {
+    var icon: String
+    var color: TagColor
+}
+
 // Database type
 struct PricetagDB: Codable {
     var tags: [String: TagColor]
-    var icons: [String: String]
+    var icons: [String: FiletypeIcon]
     var paths: [String: [String]]
 }
 
@@ -222,11 +228,11 @@ func iconForItem(named name: String, fullPath: String, db: PricetagDB) -> String
     }
 
     let ext = URL(fileURLWithPath: name).pathExtension.lowercased()
-    if let icon = db.icons[ext] {
-        return icon
+    if let iconInfo = db.icons[ext] {
+        return "\(iconInfo.color.ansiCode)\(iconInfo.icon)\(TagColor.reset)"
     }
 
-    return " "
+    return " "
 }
 
 // Item printing helper
@@ -296,9 +302,15 @@ func pricetagLS(showAll: Bool) throws {
 }
 
 // Set icon for file extension
-func setIcon(extension ext: String, icon: String) throws {
+func setIcon(ext: String, icon: String, colorName: String) throws {
     var db = try loadDB()
-    db.icons[ext.lowercased()] = icon
+
+    guard let color = TagColor(rawValue: colorName.lowercased()) else {
+        print("Invalid color. Valid colors: red, orange, yellow, green, blue, purple, black, white")
+        return
+    }
+
+    db.icons[ext.lowercased()] = FiletypeIcon(icon: icon, color: color)
     try saveDB(db)
 }
 
@@ -331,15 +343,15 @@ func filesWithTag(_ tag: String) throws {
 // Help text
 let helptext = """
 Usage: pricetag <action> <arguments>
-> clear <file>                                                       - Clears all tags from the given file
-> createtag <name> <red|orange|yellow|green|blue|purple|black|white> - Create a new tag with the given name and color
-> fileswithtag <tag>                                                 - Lists all files with the given tag
-> info <file>                                                        - Lists tags for the given file
-> listtags                                                           - Lists available tags
-> ls                                                                 - Lists the contents of the current directory + icons and tags
-> seticon <extension> <icon>                                         - Sets icon for given file extension (for pricetag ls command)
-> tag <file> <tag>                                                   - Add the given tag to the given file
-> untag <file> <tag>                                                 - Removes the given tag from the given file
+> clear <file>                                                                 - Clears all tags from the given file
+> fileswithtag <tag>                                                           - Lists all files with the given tag
+> info <file>                                                                  - Lists tags for the given file
+> listtags                                                                     - Lists available tags
+> ls                                                                           - Lists the contents of the current directory + icons and tags
+> newtag <name> <red|orange|yellow|green|blue|purple|black|white>              - Create a new tag with the given name and color
+> seticon <extension> <icon> <red|orange|yellow|green|blue|purple|black|white> - Sets icon for given file extension (for pricetag ls command)
+> tag <file> <tag>                                                             - Add the given tag to the given file
+> untag <file> <tag>                                                           - Removes the given tag from the given file
 """
 
 // CLI Entrypoint
@@ -349,7 +361,7 @@ if args.count > 1 {
     let action = args[1]
 
     switch action {
-        case "createtag":
+        case "newtag":
             try createTag(name: args[2], colorName: args[3])
         case "tag":
             try tagFile(file: args[2], tag: args[3])
@@ -365,7 +377,7 @@ if args.count > 1 {
             let showAll = args.contains("-a")
             try pricetagLS(showAll: showAll)
         case "seticon":
-            try setIcon(extension: args[2], icon: args[3])
+            try setIcon(ext: args[2], icon: args[3], colorName: args[4])
         case "fileswithtag":
             try filesWithTag(args[2])
         default:
