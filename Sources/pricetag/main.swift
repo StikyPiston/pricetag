@@ -231,12 +231,19 @@ func printItem(_ name: String, db: PricetagDB) {
     var isDir: ObjCBool = false
     FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir)
 
-    let icon = iconForItem(named: name, fullPath: fullPath, db: db)
+    let rawIcon = iconForItem(named: name, fullPath: fullPath, db: db)
 
+    let icon: String
     let displayName: String
+
     if isDir.boolValue {
-        displayName = "\(TagColor.blue.ansiCode)\(name)\(TagColor.reset)"
+        let blue = TagColor.blue.ansiCode
+        let reset = TagColor.reset
+
+        icon = "\(blue)\(rawIcon)\(reset)"
+        displayName = "\(blue)\(name)\(reset)"
     } else {
+        icon = rawIcon
         displayName = name
     }
 
