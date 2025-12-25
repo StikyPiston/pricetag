@@ -331,15 +331,15 @@ func filesWithTag(_ tag: String) throws {
 // Help text
 let helptext = """
 Usage: pricetag <action> <arguments>
-> clear <file>                                           - Clears all tags from the given file
-> createtag <name> <red|orange|yellow|green|blue|purple> - Create a new tag with the given name and color
-> fileswithtag <tag>                                     - Lists all files with the given tag
-> info <file>                                            - Lists tags for the given file
-> listtags                                               - Lists available tags
-> ls                                                     - Lists the contents of the current directory + icons and tags
-> seticon <extension> <icon>                             - Sets icon for given file extension (for pricetag ls command)
-> tag <file> <tag>                                       - Add the given tag to the given file
-> untag <file> <tag>                                     - Removes the given tag from the given file
+> clear <file>                                                       - Clears all tags from the given file
+> createtag <name> <red|orange|yellow|green|blue|purple|black|white> - Create a new tag with the given name and color
+> fileswithtag <tag>                                                 - Lists all files with the given tag
+> info <file>                                                        - Lists tags for the given file
+> listtags                                                           - Lists available tags
+> ls                                                                 - Lists the contents of the current directory + icons and tags
+> seticon <extension> <icon>                                         - Sets icon for given file extension (for pricetag ls command)
+> tag <file> <tag>                                                   - Add the given tag to the given file
+> untag <file> <tag>                                                 - Removes the given tag from the given file
 """
 
 // CLI Entrypoint
