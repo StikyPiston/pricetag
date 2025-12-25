@@ -361,6 +361,8 @@ if args.count > 1 {
             try pricetagLS(showAll: showAll)
         case "seticon":
             try setIcon(extension: args[2], icon: args[3])
+        case "fileswithtag":
+            try filesWithTag(args[2])
         default:
             print(helptext)
     }
