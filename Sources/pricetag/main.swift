@@ -197,12 +197,22 @@ func fileInfo(for file: String) throws {
     }
 }
 
+// Tag format helper
+func formatTags(_ tags: [String], db: PricetagDB) -> String {
+    tags.compactMap { tag in
+        guard let color = db.tags[tag] else { return nil }
+        return "\(color.ansiCode)[\(tag)]\(TagColor.reset)"
+    }.joined(separator: " ")
+}
+
+
 // Help text
 let helptext = """
 Usage: pricetag <action> <arguments>
 > clear <file>                                           - Clears all tags from the given file
 > createtag <name> <red|orange|yellow|green|blue|purple> - Create a new tag with the given name and color
 > info <file>                                            - Lists tags for the given file
+> listtags                                               - Lists available tags
 > tag <file> <tag>                                       - Add the given tag to the given file
 > untag <file> <tag>                                     - Removes the given tag from the given file
 """
@@ -224,6 +234,8 @@ if args.count > 1 {
             try clearFile(file: args[2])
         case "info":
             try fileInfo(for: args[2])
+        case "listtags":
+            try listTags()
         default:
             print(helptext)
     }
