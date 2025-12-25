@@ -169,11 +169,12 @@ func listTags() throws {
 
     if !db.tags.isEmpty {
         print(" Available tags:")
-        for tag in db.tags {
-            print(tag)
+
+        for (tag, color) in db.tags.sorted(by: { $0.key < $1.key }) {
+            print("\(color.ansiCode)\(tag)\(TagColor.reset)")
         }
     } else {
-        print("󱈠 No tags available")        
+        print("󱈠 No tags available")
     }
 }
 
