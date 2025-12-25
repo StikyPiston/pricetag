@@ -297,11 +297,38 @@ func setIcon(extension ext: String, icon: String) throws {
     try saveDB(db)
 }
 
+// Get files with given tag
+func filesWithTag(_ tag: String) throws {
+    let db = try loadDB()
+
+    // Validate tag exists
+    guard db.tags[tag] != nil else {
+        print("󱈠 Tag '\(tag)' does not exist")
+        return
+    }
+
+    let matches = db.paths
+        .filter { (_, tags) in tags.contains(tag) }
+        .map { $0.key }
+        .sorted()
+
+    if matches.isEmpty {
+        print("󱈠 No files with tag \(tag)")
+        return
+    }
+
+    print(" Files with tag \(tag):")
+    for path in matches {
+        print(path)
+    }
+}
+
 // Help text
 let helptext = """
 Usage: pricetag <action> <arguments>
 > clear <file>                                           - Clears all tags from the given file
 > createtag <name> <red|orange|yellow|green|blue|purple> - Create a new tag with the given name and color
+> fileswithtag <tag>                                     - Lists all files with the given tag
 > info <file>                                            - Lists tags for the given file
 > listtags                                               - Lists available tags
 > ls                                                     - Lists the contents of the current directory + icons and tags
