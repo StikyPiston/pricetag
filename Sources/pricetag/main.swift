@@ -71,3 +71,31 @@ func clearFile(file: String) throws {
     db.paths[file] = []
     try saveDB(db)
 }
+
+// Help text
+let helptext = """
+Usage: pricetag <action> <arguments>
+> tag <file> <tag>   - Add the given tag to the given file
+> untag <file> <tag> - Removes the given tag from the given file
+> clear <file>       - Clears all tags from the given file
+"""
+
+// CLI Entrypoint
+let args = CommandLine.arguments
+
+if args.count > 1 {
+    let action = args[1]
+
+    switch action {
+        case "tag":
+            try tagFile(file: args[2], tag: args[3])
+        case "untag":
+            try untagFile(from: args[2], tag: args[3])
+        case "clear":
+            try clearFile(file: args[2])
+        default:
+            print(helptext)
+    }
+} else {
+    print(helptext)
+}
