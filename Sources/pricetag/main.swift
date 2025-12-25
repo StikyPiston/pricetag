@@ -227,13 +227,24 @@ func iconForItem(named name: String, fullPath: String, db: PricetagDB) -> String
 // Item printing helper
 func printItem(_ name: String, db: PricetagDB) {
     let fullPath = canonicalPath(name)
+
+    var isDir: ObjCBool = false
+    FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir)
+
     let icon = iconForItem(named: name, fullPath: fullPath, db: db)
+
+    let displayName: String
+    if isDir.boolValue {
+        displayName = "\(TagColor.blue.ansiCode)\(name)\(TagColor.reset)"
+    } else {
+        displayName = name
+    }
 
     if let tags = db.paths[fullPath], !tags.isEmpty {
         let tagString = formatTags(tags, db: db)
-        print("\(icon) \(name) \(tagString)")
+        print("\(icon) \(displayName) \(tagString)")
     } else {
-        print("\(icon) \(name)")
+        print("\(icon) \(displayName)")
     }
 }
 
