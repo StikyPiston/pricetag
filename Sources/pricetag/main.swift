@@ -10,8 +10,8 @@ let homeDir     = fileManager.homeDirectoryForCurrentUser
 let dbDir       = homeDir.appendingPathComponent(".pricetagdb.json")
 
 // Create files if they do not exist
-func ensureFileExists(at url: URL, defaultContents: String = "[]") {
-    if FileManager.default.fileExists(atPath: url.path) == false {
+func ensureFileExists(at url: URL, defaultContents: String = "{\"paths\":{}}") {
+    if !FileManager.default.fileExists(atPath: url.path) {
         do {
             try defaultContents
                 .data(using: .utf8)?
