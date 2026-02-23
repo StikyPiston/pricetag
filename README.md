@@ -1,5 +1,8 @@
 # Pricetag
 
+> [!WARNING]
+> This is the experimental **go** rewrite of Pricetag. Some features may be broken or not implemented.
+
 **Pricetag** is a CLI-based file tagging tool written in Swift!
 
 ## Usage
