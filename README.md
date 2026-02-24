@@ -3,6 +3,8 @@
 > [!WARNING]
 > This is the experimental **go** rewrite of Pricetag. Some features may be broken or not implemented.
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/StikyPiston/pricetag)
+
 **Pricetag** is a CLI-based file tagging tool written in Swift!
 
 ## Usage
