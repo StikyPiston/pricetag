@@ -122,3 +122,38 @@ func (db *PricetagDB) ListTags() {
 		fmt.Printf("  • %s\n", Colorize(name, color))
 	}
 }
+
+func (db *PricetagDB) FilesWithTag(requiredTags []string) ([]string, error) {
+	// Validate tags exist
+	for _, tag := range requiredTags {
+		if _, ok := db.Tags[tag]; !ok {
+			return nil, fmt.Errorf("Tag '%s' doesn't exist", tag) // TODO: Add nerd font icon
+		}
+	}
+
+	var results []string
+
+	for path, fileTags := range db.Paths {
+		if hasAllTags(fileTags, requiredTags) {
+			results = append(results, path)
+		}
+	}
+
+	sort.Strings(results)
+	return results, nil
+}
+
+func hasAllTags(fileTags []string, required []string) bool {
+	tagSet := make(map[string]struct{})
+	for _, t := range fileTags {
+		tagSet[t] = struct{}{}
+	}
+
+	for _, r := range required {
+		if _, ok := tagSet[r]; !ok {
+			return false
+		}
+	}
+
+	return true
+}
