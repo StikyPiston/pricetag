@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 )
@@ -22,7 +23,7 @@ const (
 
 type FiletypeIcon struct {
 	Icon  string   `json:"icon"`
-	color TagColor `json:"color"`
+	Color TagColor `json:"color"`
 }
 
 type PricetagDB struct {
@@ -60,4 +61,38 @@ func ResolveDBPath() (string, error) {
 	}
 
 	return filepath.Join(home, dbFilename), nil
+}
+
+func LoadDB() (*PricetagDB, string, error) {
+	path, err := ResolveDBPath()
+	if err != nil {
+		return nil, "", err
+	}
+
+	// If DB doesn't exist at resolved path, return empty DB
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return NewDB(), path, nil
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, "", err
+	}
+
+	var db PricetagDB
+	if err := json.Unmarshal(data, &db); err != nil {
+		return nil, "", err
+	}
+
+	if db.Tags == nil {
+		db.Tags = make(map[string]TagColor)
+	}
+	if db.Icons == nil {
+		db.Icons = make(map[string]FiletypeIcon)
+	}
+	if db.Paths == nil {
+		db.Paths = make(map[string][]string)
+	}
+
+	return &db, path, nil
 }
