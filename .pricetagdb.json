@@ -4,7 +4,28 @@
       "Lockfiles": "black",
       "Nix": "purple"
    },
-   "icons": {},
+   "icons": {
+      "go": {
+         "icon": "󰟓",
+         "color": "blue"
+      },
+      "lock": {
+         "icon": "",
+         "color": "black"
+      },
+      "md": {
+         "icon": "",
+         "color": "black"
+      },
+      "nix": {
+         "icon": "󱄅",
+         "color": "purple"
+      },
+      "sum": {
+         "icon": "",
+         "color": "black"
+      }
+   },
    "paths": {
       "/home/distrorockhopper/Projects/pricetag/cmd/completion.go": [
          "Go"
