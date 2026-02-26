@@ -96,3 +96,12 @@ func LoadDB() (*PricetagDB, string, error) {
 
 	return &db, path, nil
 }
+
+func SaveDB(db *PricetagDB, path string) error {
+	data, err := json.MarshalIndent(db, "", "   ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(path, data, 0644)
+}
