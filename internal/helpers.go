@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const dbFilename = ".pricetagdb.json"
@@ -21,6 +22,7 @@ const (
 	Black  TagColor = "black"
 )
 
+// Check if a tag color is valid or not
 func (c TagColor) IsValid() bool {
 	switch c {
 	case Red, Orange, Yellow, Green, Blue, Purple, White, Black:
@@ -41,6 +43,38 @@ type PricetagDB struct {
 	Paths map[string][]string     `json:"paths"`
 }
 
+// Get the canonical path for a given filepath
+func CanonicalPath(p string) (string, error) {
+	if p == "" {
+		return "", nil
+	}
+
+	// Expand ~
+	if strings.HasPrefix(p, "~") {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", err
+		}
+		p = filepath.Join(home, strings.TrimPrefix(p, "~"))
+	}
+
+	// Make absolute
+	abs, err := filepath.Abs(p)
+	if err != nil {
+		return "", err
+	}
+
+	// Resolve symlinks (optional but recommended)
+	resolved, err := filepath.EvalSymlinks(abs)
+	if err == nil {
+		abs = resolved
+	}
+
+	// Clean path (remove ./, ../, etc.)
+	return filepath.Clean(abs), nil
+}
+
+// Initialise a new database
 func NewDB() *PricetagDB {
 	return &PricetagDB{
 		Tags:  make(map[string]TagColor),
@@ -49,6 +83,7 @@ func NewDB() *PricetagDB {
 	}
 }
 
+// Check whether or not the database being used is ./.pricetagdb.json or ~/.pricetagdb.json
 func ResolveDBPath() (string, error) {
 	// Check current directory
 	cwd, err := os.Getwd()
@@ -72,6 +107,7 @@ func ResolveDBPath() (string, error) {
 	return filepath.Join(home, dbFilename), nil
 }
 
+// Load the database
 func LoadDB() (*PricetagDB, string, error) {
 	path, err := ResolveDBPath()
 	if err != nil {
@@ -106,6 +142,7 @@ func LoadDB() (*PricetagDB, string, error) {
 	return &db, path, nil
 }
 
+// Save the database
 func SaveDB(db *PricetagDB, path string) error {
 	data, err := json.MarshalIndent(db, "", "   ")
 	if err != nil {
