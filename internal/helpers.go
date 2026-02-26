@@ -44,6 +44,12 @@ type PricetagDB struct {
 	Paths map[string][]string     `json:"paths"`
 }
 
+var ValidColors = []string{
+	"red", "orange", "yellow",
+	"green", "blue", "purple",
+	"black", "white",
+}
+
 // Get the canonical path for a given filepath
 func CanonicalPath(p string) (string, error) {
 	if p == "" {
