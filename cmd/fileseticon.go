@@ -35,6 +35,7 @@ var fileseticonCmd = &cobra.Command{
 		fmt.Printf("Set icon for .%s -> %s (%s)\n", ext, icon, color)
 		return nil
 	},
+	ValidArgsFunction: completeTags,
 }
 
 func init() {
