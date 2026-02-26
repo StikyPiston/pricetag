@@ -1,0 +1,80 @@
+{
+   "tags": {
+      "Go": "blue",
+      "Lockfiles": "black",
+      "Nix": "purple"
+   },
+   "icons": {
+      "go": {
+         "icon": "󰟓",
+         "color": "blue"
+      },
+      "lock": {
+         "icon": "",
+         "color": "black"
+      },
+      "md": {
+         "icon": "",
+         "color": "black"
+      },
+      "nix": {
+         "icon": "󱄅",
+         "color": "purple"
+      },
+      "sum": {
+         "icon": "",
+         "color": "black"
+      }
+   },
+   "paths": {
+      "/home/distrorockhopper/Projects/pricetag/cmd/completion.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/file.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/fileinfo.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/root.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/tag.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/tagadd.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/tagclear.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/taglist.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/tagnew.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/cmd/tagremove.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/flake.lock": [
+         "Lockfiles",
+         "Nix"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/flake.nix": [
+         "Nix"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/go.sum": [
+         "Lockfiles"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/internal/helpers.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/internal/tag.go": [
+         "Go"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/main.go": [
+         "Go"
+      ]
+   }
+}

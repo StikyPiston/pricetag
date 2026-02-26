@@ -1,0 +1,159 @@
+package internal
+
+import (
+	"fmt"
+	"sort"
+)
+
+func (db *PricetagDB) CreateTag(name string, color TagColor) error {
+	if name == "" {
+		return fmt.Errorf("tag name cannot be empty")
+	}
+
+	if !color.IsValid() {
+		return fmt.Errorf("invalid color: %s", color)
+	}
+
+	if _, exists := db.Tags[name]; exists {
+		return fmt.Errorf("tag '%s' already exists", name)
+	}
+
+	db.Tags[name] = color
+	return nil
+}
+
+func (db *PricetagDB) AddTagsToFiles(files []string, tags []string) error {
+	for _, tag := range tags {
+		if _, exists := db.Tags[tag]; !exists {
+			return fmt.Errorf("tag '%s' does not exist", tag)
+		}
+	}
+
+	for _, file := range files {
+		canon, err := CanonicalPath(file)
+		if err != nil {
+			return err
+		}
+
+		existing := db.Paths[canon]
+		tagSet := make(map[string]bool)
+
+		for _, t := range existing {
+			tagSet[t] = true
+		}
+
+		for _, tag := range tags {
+			tagSet[tag] = true
+		}
+
+		var final []string
+		for t := range tagSet {
+			final = append(final, t)
+		}
+
+		db.Paths[canon] = final
+	}
+
+	return nil
+}
+
+func (db *PricetagDB) RemoveTagsFromFiles(files []string, tags []string) error {
+	tagSet := make(map[string]bool)
+	for _, t := range tags {
+		tagSet[t] = true
+	}
+
+	for _, file := range files {
+		canon, err := CanonicalPath(file)
+		if err != nil {
+			return err
+		}
+
+		existing, ok := db.Paths[canon]
+		if !ok {
+			continue
+		}
+
+		var filtered []string
+		for _, t := range existing {
+			if !tagSet[t] {
+				filtered = append(filtered, t)
+			}
+		}
+
+		if len(filtered) == 0 {
+			delete(db.Paths, canon)
+		} else {
+			db.Paths[canon] = filtered
+		}
+	}
+
+	return nil
+}
+
+func (db *PricetagDB) ClearFiles(files []string) error {
+	for _, file := range files {
+		canon, err := CanonicalPath(file)
+		if err != nil {
+			return err
+		}
+		delete(db.Paths, canon)
+	}
+	return nil
+}
+
+func (db *PricetagDB) ListTags() {
+	if len(db.Tags) == 0 {
+		fmt.Println("No tags defined.")
+		return
+	}
+
+	fmt.Println("Available tags:")
+
+	// Sort tag names for stable output
+	var names []string
+	for name := range db.Tags {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	for _, name := range names {
+		color := db.Tags[name]
+		fmt.Printf("  • %s\n", Colorize(name, color))
+	}
+}
+
+func (db *PricetagDB) FilesWithTag(requiredTags []string) ([]string, error) {
+	// Validate tags exist
+	for _, tag := range requiredTags {
+		if _, ok := db.Tags[tag]; !ok {
+			return nil, fmt.Errorf("Tag '%s' doesn't exist", tag) // TODO: Add nerd font icon
+		}
+	}
+
+	var results []string
+
+	for path, fileTags := range db.Paths {
+		if hasAllTags(fileTags, requiredTags) {
+			results = append(results, path)
+		}
+	}
+
+	sort.Strings(results)
+	return results, nil
+}
+
+func hasAllTags(fileTags []string, required []string) bool {
+	tagSet := make(map[string]struct{})
+	for _, t := range fileTags {
+		tagSet[t] = struct{}{}
+	}
+
+	for _, r := range required {
+		if _, ok := tagSet[r]; !ok {
+			return false
+		}
+	}
+
+	return true
+}
