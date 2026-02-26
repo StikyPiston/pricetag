@@ -11,7 +11,7 @@ var tagNames []string
 
 // tagaddCmd represents the tagadd command
 var tagaddCmd = &cobra.Command{
-	Use:   "tag <file...> --tags <tag...>",
+	Use:   "add <file...> --tags <tag...>",
 	Short: "Add tag(s) to file(s)",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -34,5 +34,5 @@ var tagaddCmd = &cobra.Command{
 
 func init() {
 	tagCmd.AddCommand(tagaddCmd)
-	tagCmd.Flags().StringSliceVar(&tagNames, "tags", nil, "Tags to apply")
+	tagaddCmd.Flags().StringSliceVar(&tagNames, "tags", nil, "Tags to apply")
 }
