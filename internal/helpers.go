@@ -21,6 +21,15 @@ const (
 	Black  TagColor = "black"
 )
 
+func (c TagColor) IsValid() bool {
+	switch c {
+	case Red, Orange, Yellow, Green, Blue, Purple, White, Black:
+		return true
+	default:
+		return false
+	}
+}
+
 type FiletypeIcon struct {
 	Icon  string   `json:"icon"`
 	Color TagColor `json:"color"`
