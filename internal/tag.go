@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"sort"
 )
 
 func (db *PricetagDB) CreateTag(name string, color TagColor) error {
@@ -99,4 +100,25 @@ func (db *PricetagDB) ClearFiles(files []string) error {
 		delete(db.Paths, canon)
 	}
 	return nil
+}
+
+func (db *PricetagDB) ListTags() {
+	if len(db.Tags) == 0 {
+		fmt.Println("No tags defined.")
+		return
+	}
+
+	fmt.Println("Available tags:")
+
+	// Sort tag names for stable output
+	var names []string
+	for name := range db.Tags {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	for _, name := range names {
+		color := db.Tags[name]
+		fmt.Printf("  • %s\n", Colorize(name, color))
+	}
 }
