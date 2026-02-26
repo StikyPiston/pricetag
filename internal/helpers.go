@@ -168,6 +168,10 @@ func Colorize(text string, c TagColor) string {
 		return color.New(color.FgBlue).Sprint(text)
 	case Purple:
 		return color.New(color.FgMagenta).Sprint(text)
+	case Black:
+		return color.New(color.FgBlack).Sprint(text)
+	case White:
+		return color.New(color.FgWhite).Sprint(text)
 	default:
 		return text
 	}
