@@ -1,0 +1,14 @@
+{
+   "tags": {
+      "Lockfiles": "black"
+   },
+   "icons": {},
+   "paths": {
+      "/home/distrorockhopper/Projects/pricetag/flake.lock": [
+         "Lockfiles"
+      ],
+      "/home/distrorockhopper/Projects/pricetag/go.sum": [
+         "Lockfiles"
+      ]
+   }
+}
