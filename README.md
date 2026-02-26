@@ -1,31 +1,47 @@
 # Pricetag
 
-> [!WARNING]
-> This is the experimental **go** rewrite of Pricetag. Some features may be broken or not implemented.
-
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/StikyPiston/pricetag)
 
-**Pricetag** is a CLI-based file tagging tool written in Swift!
+**Pricetag** is a CLI-based file tagging tool written in Go!
 
 ## Usage
 
-There are various subcommands that can be used with **pricetag**. Here they are:
+These are a small subset of `pricetag`'s ability, see the `--help` flag for more!
 
-```bash
-clear <file>                                                                 - Clears all tags from the given file
-fileswithtag <tag>                                                           - Lists all files with the given tag
-info <file>                                                                  - Lists tags for the given file
-listtags                                                                     - Lists available tags
-ls                                                                           - Lists the contents of the current directory + icons and tags
-newtag <name> <red|orange|yellow|green|blue|purple|black|white>              - Create a new tag with the given name and color
-seticon <extension> <icon> <red|orange|yellow|green|blue|purple|black|white> - Sets icon for given file extension (for pricetag ls command)
-tag <file> <tag>                                                             - Add the given tag to the given file
-untag <file> <tag>                                                           - Removes the given tag from the given file```
+### Create a tag
+
+```shell
+pricetag tag new <name> <color>
+```
+
+### Add tags to files
+
+```shell
+pricetag tag add <file> --tags <tags>
+```
+
+### List files with tags
+
+```shell
+pricetag files withtag <tags>
+```
 
 ## Installation
 
-To install, simply use my **homebrew** formula!
+### with Nix
 
-```bash
-brew install stikypiston/formulae/pricetag
+To install, add the repo to your inputs
+
+```nix
+inputs = {
+  pricetag.url = "github:stikypiston/pricetag"
+}
+```
+
+And add it to your systemPackages
+
+```nix
+environment.systemPackages = [
+  inputs.pricetag.packages.${pkgs.stdenv.hostPlatform.system}.pricetag
+]
 ```
