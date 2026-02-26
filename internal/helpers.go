@@ -2,6 +2,7 @@ package internal
 
 import (
 	"encoding/json"
+	"github.com/fatih/color"
 	"os"
 	"path/filepath"
 	"strings"
@@ -150,4 +151,24 @@ func SaveDB(db *PricetagDB, path string) error {
 	}
 
 	return os.WriteFile(path, data, 0644)
+}
+
+// Print a string in color
+func Colorize(text string, c TagColor) string {
+	switch c {
+	case Red:
+		return color.New(color.FgRed).Sprint(text)
+	case Orange:
+		return color.New(color.FgHiYellow).Sprint(text)
+	case Yellow:
+		return color.New(color.FgYellow).Sprint(text)
+	case Green:
+		return color.New(color.FgGreen).Sprint(text)
+	case Blue:
+		return color.New(color.FgBlue).Sprint(text)
+	case Purple:
+		return color.New(color.FgMagenta).Sprint(text)
+	default:
+		return text
+	}
 }
