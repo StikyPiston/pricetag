@@ -30,9 +30,11 @@ var tagaddCmd = &cobra.Command{
 
 		return internal.SaveDB(db, path)
 	},
+	ValidArgsFunction: completeFiles,
 }
 
 func init() {
 	tagCmd.AddCommand(tagaddCmd)
 	tagaddCmd.Flags().StringSliceVar(&tagNames, "tags", nil, "Tags to apply")
+	tagaddCmd.RegisterFlagCompletionFunc("tags", completeTags)
 }
