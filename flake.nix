@@ -46,7 +46,7 @@
           meta = with pkgs.lib; {
             description = "A CLI file tagging solution";
             license = licenses.mit;
-            platforms = platforms.linux;
+            platforms = platforms.all;
           };
         };
 
